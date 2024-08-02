@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddSingleton<ICounterService, CounterService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 
 builder.Services.AddDbContext<TicketContext>(options =>
 {
