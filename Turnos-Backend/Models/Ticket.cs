@@ -5,8 +5,8 @@ namespace Turnos_Backend.Models
 {
     public enum CustomerType
     {
-        IOMAPAMI = 1,   
-        ObraSocial = 2,
+        IOMA_PAMI = 1,   
+        Obra_Social = 2,
         Particular = 3,
         Perfumeria = 4
     }

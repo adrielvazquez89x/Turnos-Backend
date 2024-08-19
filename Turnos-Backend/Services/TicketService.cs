@@ -26,16 +26,22 @@ namespace Turnos_Backend.Services
                 CounterNumber = 0
             };
 
-            //Generamos el DTO para enviar al front
-            var ticketDTO = new TicketDTO
-            {
-                TicketNumber = ticket.TicketNumber,
-                DateTime = ticket.DateTime
-            };
-
             // Se guarda en a la DB
             await _context.Ticket.AddAsync(ticket);
             await _context.SaveChangesAsync();
+            
+            //Generamos el DTO para enviar al front
+            var ticketDTO = new TicketDTO
+            {
+                Id = ticket.Id,
+                TicketNumber = ticket.TicketNumber,
+                Customer = ticket.Customer,
+                DateTime = ticket.DateTime,
+                Called = ticket.Called,
+                Status = ticket.Status,
+                CounterNumber = ticket.CounterNumber
+
+            };
 
             return ticketDTO;
         }
@@ -43,7 +49,7 @@ namespace Turnos_Backend.Services
         public async Task<IEnumerable<TicketBoxDTO>> GetTickets()
         {
             var query = _context.Ticket.AsQueryable();
-            query = query.Where(ticket => ticket.DateTime.Date == DateTime.Today.Date);
+            query = query.Where(ticket => ticket.DateTime.Date == DateTime.Today.Date && !ticket.Called);
 
             return await query.Select(ticket => new TicketBoxDTO
             {
@@ -86,15 +92,25 @@ namespace Turnos_Backend.Services
             return null;
         }
 
+        public IEnumerable<CustomerTypeDTO> GetTypeCustomers()
+        {
+            var customerTypes = Enum.GetValues(typeof(CustomerType))
+                .Cast<CustomerType>()
+                .Select(ct => new CustomerTypeDTO { Value = (int)ct,Name = ct.ToString() })
+                .ToList();
+
+            return customerTypes;
+        }
+
         String TicketNumberGenerator(int countNumber, CustomerType customer)
         {
             string formatedNumber = countNumber.ToString("D3");
 
             switch (customer)
             {
-                case CustomerType.IOMAPAMI:
-                    return "IOMA" + formatedNumber;
-                case CustomerType.ObraSocial:
+                case CustomerType.IOMA_PAMI:
+                    return "OPM" + formatedNumber;
+                case CustomerType.Obra_Social:
                     return "OS" + formatedNumber;
                 case CustomerType.Particular:
                     return "PA" + formatedNumber;

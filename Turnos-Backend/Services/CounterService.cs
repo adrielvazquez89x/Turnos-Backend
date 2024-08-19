@@ -10,8 +10,8 @@ namespace Turnos_Backend.Services
         {
             _customerTypeCounters = new Dictionary<CustomerType, int>
             {
-                { CustomerType.IOMAPAMI, 0 },
-                { CustomerType.ObraSocial, 0 },
+                { CustomerType.IOMA_PAMI, 0 },
+                { CustomerType.Obra_Social, 0 },
                 { CustomerType.Particular, 0 },
                 { CustomerType.Perfumeria, 0 }
             };

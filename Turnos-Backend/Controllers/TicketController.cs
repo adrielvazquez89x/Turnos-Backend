@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Runtime.CompilerServices;
 using Turnos_Backend.DTO;
 using Turnos_Backend.Models;
@@ -14,10 +15,13 @@ namespace Turnos_Backend.Controllers
     
         private ICounterService _counters;
         private ITicketService _ticketService;
-        public TicketController(ICounterService counters, ITicketService ticketService)
+        private readonly IHubContext<TurnsHub> _hubContext;
+
+        public TicketController(ICounterService counters, ITicketService ticketService, IHubContext<TurnsHub> hubContext)
         {
             _counters = counters;
             _ticketService = ticketService;
+            _hubContext = hubContext;
         }
 
         [HttpPost("{customer}")]
@@ -38,6 +42,8 @@ namespace Turnos_Backend.Controllers
                 return BadRequest("Error creating ticket");
             }
 
+            await _hubContext.Clients.All.SendAsync("ReceiveTurn", ticketDTO);
+
             return Ok(ticketDTO);
         }
 
@@ -55,6 +61,14 @@ namespace Turnos_Backend.Controllers
             var ticketUpdated = await _ticketService.UpdateTicket(id, ticketUpdateDto);
 
             return Ok(ticketUpdated);
+        }
+
+        [HttpGet("GetCustomersCount")]
+        public IActionResult GetCustomersCount()
+        {
+           var customers =  _ticketService.GetTypeCustomers();
+
+            return customers != null ? Ok(customers) : NotFound();
         }
     }
 }

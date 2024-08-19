@@ -1,9 +1,16 @@
-﻿namespace Turnos_Backend.DTO
+﻿using Turnos_Backend.Models;
+
+namespace Turnos_Backend.DTO
 {
     public class TicketDTO
     {
-        public string TicketNumber { get; set; }
+        public int Id { get; set; }
+        public string? TicketNumber { get; set; }
+        public CustomerType Customer { get; set; }
         public DateTime DateTime { get; set; }
-        
+        public bool Called { get; set; }
+        public bool Status { get; set; }
+        public int CounterNumber { get; set; }
+
     }
 }
